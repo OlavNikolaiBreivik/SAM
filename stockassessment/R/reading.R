@@ -258,12 +258,29 @@ setup.sam.data <- function(fleets=NULL, surveys=NULL, residual.fleet=NULL,
     if("weight"%in%names(attributes(m))){
       weight<<-c(weight,as.vector(attr(m,"weight")))
     }else{
-      weight<<-c(weight,rep(NA,length(year)))
+      if("cov"%in%names(attributes(m))){
+        weight<<-c(weight,unlist(lapply(attr(m,"cov"),diag)))
+      }else{
+        if("cov-weight"%in%names(attributes(m))){
+          weight<<-c(weight,1/unlist(lapply(attr(m,"cov-weight"),diag)))
+        }else{
+          weight<<-c(weight,rep(NA,length(year)))
+        }
+      }
     }
+    if("cov"%in%names(attributes(m))){
+      attr(m,"cor") <- lapply(attr(m,"cov"),cov2cor)
+    }
+    if("cov-weight"%in%names(attributes(m))){
+      attr(m,"cor")<-lapply(attr(m,"cov-weight"),cov2cor)
+    }    
     if("cor"%in%names(attributes(m))){
-      corList <<- c(corList,attr(m,"cor"))
+      thisCorList <- attr(m,"cor")
+      whichCorOK <- which(unlist(lapply(thisCorList, function(x)!any(is.na(x)))))
+      thisCorList <- thisCorList[whichCorOK]
+      corList <<- c(corList,thisCorList)
       nextIdx <- if(all(is.na(idxCor))){0}else{max(idxCor,na.rm=TRUE)}
-      idxCor[fleet.idx,colnames(idxCor)%in%rownames(m)] <<- nextIdx:(nextIdx+length(attr(m,"cor"))-1)
+      idxCor[fleet.idx,colnames(idxCor)%in%rownames(m)][whichCorOK] <<- nextIdx:(nextIdx+length(thisCorList)-1)
     }
   }
   if(!is.null(residual.fleet)){
