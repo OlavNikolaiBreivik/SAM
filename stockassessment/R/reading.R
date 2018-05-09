@@ -248,6 +248,7 @@ setup.sam.data <- function(fleets=NULL, surveys=NULL, residual.fleet=NULL,
   colnames(idxCor)<-rownames(natural.mortality)
   dat<-data.frame(year=NA,fleet=NA,age=NA,aux=NA)
   weight<-NULL
+  useCovStructure <-0
   doone<-function(m){
     year<-rownames(m)[row(m)]
     fleet.idx<<-fleet.idx+1
@@ -262,6 +263,7 @@ setup.sam.data <- function(fleets=NULL, surveys=NULL, residual.fleet=NULL,
         weight<<-c(weight,unlist(lapply(attr(m,"cov"),diag)))
       }else{
         if("cov-weight"%in%names(attributes(m))){
+          useCovStructure <<- 1
           weight<<-c(weight,1/unlist(lapply(attr(m,"cov-weight"),diag)))
         }else{
           weight<<-c(weight,rep(NA,length(year)))
@@ -403,7 +405,8 @@ setup.sam.data <- function(fleets=NULL, surveys=NULL, residual.fleet=NULL,
     landMeanWeight=attr(dat,'land.mean.weight'),
     propF=attr(dat,'prop.f'),
     propM=attr(dat,'prop.m'),
-    corList=corList
+    corList=corList,
+    useCovStructure = useCovStructure
   )
   attr(ret,"fleetNames")<-attr(dat,"name")  
   return(ret)

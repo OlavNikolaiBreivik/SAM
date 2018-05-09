@@ -88,7 +88,8 @@ Type objective_function<Type>::operator() ()
   DATA_INTEGER(resFlag); confset.resFlag=resFlag;  
   DATA_FACTOR(obsLikelihoodFlag); confset.obsLikelihoodFlag=obsLikelihoodFlag; 
   DATA_INTEGER(fixVarToWeight); confset.fixVarToWeight=fixVarToWeight; 
-
+  DATA_INTEGER(useCovStructure); confset.useCovStructure=useCovStructure; 
+  
   paraSet<Type> paraset;
   PARAMETER_VECTOR(logFpar); paraset.logFpar=logFpar;  
   PARAMETER_VECTOR(logQpow); paraset.logQpow=logQpow;  

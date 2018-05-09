@@ -142,7 +142,8 @@ struct confSet{
   int resFlag; 
   vector<int> obsLikelihoodFlag;
   int fixVarToWeight;
-
+  int useCovStructure;
+  
   confSet() {};
 
   confSet(SEXP x){
@@ -169,6 +170,7 @@ struct confSet{
     resFlag = (int)*REAL(getListElement(x,"resFlag"));
     obsLikelihoodFlag = asVector<int>(getListElement(x,"obsLikelihoodFlag"));
     fixVarToWeight = (int)*REAL(getListElement(x,"fixVarToWeight"));
+    useCovStructure = (int)*REAL(getListElement(x,"useCovStructure"));
   };
 
   confSet& operator=(const confSet& rhs) {
@@ -194,7 +196,7 @@ struct confSet{
     resFlag = rhs.resFlag;
     obsLikelihoodFlag = rhs.obsLikelihoodFlag;
     fixVarToWeight = rhs.fixVarToWeight;
-
+    useCovStructure = rhs.useCovStructure;
     return *this;
   };
 };

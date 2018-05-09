@@ -258,9 +258,14 @@ Type nllObs(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, array<Type> &
               matrix<Type> thiscov(thisdim,thisdim);
               for(int r=0;r<thisdim;++r){
                 for(int c=0;c<thisdim;++c){
-                  thiscov(r,c)=thiscor(r,c)*sqrt(thisvar(r)*thisvar(c));
+                  if(conf.fixVarToWeight==1 || conf.useCovStructure==0){
+                    thiscov(r,c)=thiscor(r,c)*sqrt(thisvar(r)*thisvar(c));
+                  }else{
+                    thiscov(r,c)=thiscor(r,c)*sqrt(thisvar(r)*thisvar(c))*sqrt(1/(dat.weight(idxfrom + r)*dat.weight(idxfrom + c)));
+                  }
                 }
               } 
+              std::cout << thiscor << std::endl;
               density::MVNORM_t<Type> thisnll(thiscov);
 	      nll+=thisnll(dat.logobs.segment(idxfrom,idxlength)-predObs.segment(idxfrom,idxlength), keep.segment(idxfrom,idxlength));              
 	      SIMULATE_F(of){
